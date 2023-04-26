@@ -14,14 +14,25 @@
  *          schema:
  *            $ref: '#/components/schemas/UserRegister'
  *     responses:
- *       200:
- *         description: Create new user
+ *       201:
+ *         description: Return result after register
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Book'
+ *               $ref: '#/components/schemas/JsonRespond'
+ *             example:
+ *               statusCode: 201
+ *               message: New account registration successful
+ *       409:
+ *         description: Email registered
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/JsonRespond'
+ *             example:
+ *               statusCode: 409
+ *               message: This email is registered
+ *               error: ConflictError
  */
 
 /**
@@ -39,13 +50,50 @@
  *            $ref: '#/components/schemas/UserLogin'
  *     responses:
  *       200:
- *         description: User login
+ *         description: >
+ *           Successfully authenticated.
+ *           The session ID is returned in a cookie named `JSESSIONID`. You need to include this cookie in subsequent requests.
+ *         headers:
+ *           Set-Cookie:
+ *             schema:
+ *               type: string
+ *               example: JSESSIONID=abcde12345; Path=/; HttpOnly
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Book'
+ *               $ref: '#/components/schemas/JsonRespond'
+ *             example:
+ *               statusCode: 200
+ *               message: Login successfully
+ *               data:
+ *                 user:
+ *                   mail: 20522122@gm.uit.edu.vn
+ *                   firstName: Tuan
+ *                   lastName: Nguyen
+ *                   avatar: https://media.istockphoto.com/id/1223671392/vector/default-profile-picture-avatar-photo-placeholder-vector-illustration.jpg?s=170667a&w=0&k=20&c=m-F9Doa2ecNYEEjeplkFCmZBlc5tm1pl1F7cBCh9ZzM=
+ *                   phoneNum: 0967781798
+ *                   dateOfBirth: null
+ *                 accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Im1haWwiOiIyMDUyMjEyMkBnbS51aXQuZWR1LnZuIiwicm9sZSI6IkFkbWluIn0sImlhdCI6MTY4MjQxMDE0MywiZXhwIjoxNjgyNDk2NTQzfQ.QzhYyvOf3NClAr1aqM_FFsuw1D7QzpRvevBnDItUqI8
+ *       401:
+ *         description: Wrong password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/JsonRespond'
+ *             example:
+ *               statusCode: 409
+ *               message: Wrong password
+ *               error: UnauthorizedError
+ *       409:
+ *         description: User not register
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/JsonRespond'
+ *             example:
+ *               statusCode: 409
+ *               message: User not register
+ *               error: ConflictError
  */
 
 /**
@@ -55,15 +103,18 @@
  *   delete:
  *     summary: User logout
  *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: User logout
+ *         description: Logout successfully
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Book'
+ *               $ref: '#/components/schemas/JsonRespond'
+ *             example:
+ *               statusCode: 200
+ *               message: Logout successfully
  */
 
 /**
@@ -73,80 +124,18 @@
  *   post:
  *     summary: Refresh token
  *     tags: [Auth]
+ *     security:
+ *       - cookieAuth: []
  *     responses:
  *       200:
- *         description: Create new access token and refresh token
+ *         description: Success
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Book'
- */
-
-/**
- * @swagger
- * /books/{id}:
- *   get:
- *     summary: Get the book by id
- *     tags: [Books]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: The book id
- *     responses:
- *       200:
- *         description: The book response by id
- *         contens:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Book'
- *       404:
- *         description: The book was not found
- *   put:
- *    summary: Update the book by the id
- *    tags: [Books]
- *    parameters:
- *      - in: path
- *        name: id
- *        schema:
- *          type: string
- *        required: true
- *        description: The book id
- *    requestBody:
- *      required: true
- *      content:
- *        application/json:
- *          schema:
- *            $ref: '#/components/schemas/Book'
- *    responses:
- *      200:
- *        description: The book was updated
- *        content:
- *          application/json:
- *            schema:
- *              $ref: '#/components/schemas/Book'
- *      404:
- *        description: The book was not found
- *      500:
- *        description: Some error happened
- *   delete:
- *     summary: Remove the book by id
- *     tags: [Books]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: The book id
- *
- *     responses:
- *       200:
- *         description: The book was deleted
- *       404:
- *         description: The book was not found
+ *               $ref: '#/components/schemas/JsonRespond'
+ *             example:
+ *               statusCode: 200
+ *               message: Success
+ *               data:
+ *                 accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Im1haWwiOiIyMDUyMjEyMkBnbS51aXQuZWR1LnZuIiwicm9sZSI6IkFkbWluIn0sImlhdCI6MTY4MjQxMzI4OSwiZXhwIjoxNjgyNDk5Njg5fQ.mlLNlcXm1KOsFXevX35uAqS2RWx-XRWmCKh89hHawKA
  */

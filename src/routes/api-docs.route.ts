@@ -7,8 +7,8 @@ const options: swaggerJSDoc.OAS3Options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Backend for gocery',
-      description: 'A collection APIs for gocery',
+      title: 'Backend for listify',
+      description: 'A collection APIs for listify',
       version: '1.0.0',
       license: {
         name: 'MIT',
