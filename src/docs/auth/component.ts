@@ -75,5 +75,5 @@
  *     cookieAuth:
  *       type: apiKey
  *       in: cookie
- *       name: JSESSIONID
+ *       name: refreshtoken
  */

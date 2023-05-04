@@ -52,7 +52,7 @@
  *       200:
  *         description: >
  *           Successfully authenticated.
- *           The session ID is returned in a cookie named `JSESSIONID`. You need to include this cookie in subsequent requests.
+ *           The session ID is returned in a cookie named `refreshtoken`. You need to include this cookie in subsequent requests.
  *         headers:
  *           Set-Cookie:
  *             schema:
