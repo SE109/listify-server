@@ -18,7 +18,7 @@ class GroupTask extends Model {
   user!: User;
 
   @BelongsToMany(() => Task, () => TaskIncluded)
-  task!: Task;
+  taskList!: Task;
 
   // Columns
   @Column({ type: DataType.INTEGER, primaryKey: true, autoIncrement: true, field: 'group_task_id' })
