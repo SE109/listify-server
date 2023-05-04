@@ -5,32 +5,22 @@ import {
   CreatedAt,
   UpdatedAt,
   DataType,
-  BelongsToMany,
   Default,
   BeforeValidate,
   BeforeCreate,
   HasMany,
 } from 'sequelize-typescript';
-// import { Role, Rank, UserToRole, UserToRank, Product, Cart, Address } from './';
 import bcrypt from 'bcrypt';
+import { TaskList } from '../models';
 
 @Table({ modelName: 'User', tableName: 'users' })
 class User extends Model {
   // Associations
-  // @BelongsToMany(() => Role, () => UserToRole)
-  // role?: Role;
-
-  // @BelongsToMany(() => Rank, () => UserToRank)
-  // rank!: Rank;
-
-  // @BelongsToMany(() => Product, () => Cart)
-  // product!: Product;
-
-  // @HasMany(() => Address)
-  // addressList!: Address[];
+  @HasMany(() => TaskList)
+  taskGroupList!: TaskList[];
 
   // Columns
-  @Column({ type: DataType.STRING, primaryKey: true })
+  @Column({ type: DataType.STRING, primaryKey: true, field: 'mail' })
   mail!: string;
 
   @Column({ type: DataType.TEXT })
