@@ -7,7 +7,7 @@ import {
   DataType,
   ForeignKey,
 } from 'sequelize-typescript';
-import { Task, TaskList } from '../models';
+import { Task, GroupTask } from '../models';
 
 @Table({ modelName: 'TaskIncluded', tableName: 'task_included' })
 class TaskIncluded extends Model {
@@ -16,9 +16,9 @@ class TaskIncluded extends Model {
   @Column({ type: DataType.INTEGER, primaryKey: true, field: 'task_id' })
   taskId!: string;
 
-  @ForeignKey(() => TaskList)
-  @Column({ type: DataType.INTEGER, primaryKey: true, field: 'task_list_id' })
-  taskListId!: string;
+  @ForeignKey(() => GroupTask)
+  @Column({ type: DataType.INTEGER, primaryKey: true, field: 'group_task_id' })
+  groupTaskId!: string;
 
   @CreatedAt
   @Column({ type: DataType.DATE, field: 'created_at' })

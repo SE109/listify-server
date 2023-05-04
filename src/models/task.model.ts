@@ -10,7 +10,7 @@ import {
   BelongsToMany,
   HasMany,
 } from 'sequelize-typescript';
-import { SubTask, TaskIncluded, TaskList, User, Voice } from '../models';
+import { SubTask, TaskIncluded, GroupTask, User, Voice } from '../models';
 
 @Table({ modelName: 'Task', tableName: 'task' })
 class Task extends Model {
@@ -18,8 +18,8 @@ class Task extends Model {
   @BelongsTo(() => User)
   user!: User;
 
-  @BelongsToMany(() => TaskList, () => TaskIncluded)
-  taskList!: TaskList;
+  @BelongsToMany(() => GroupTask, () => TaskIncluded)
+  groupTask!: GroupTask;
 
   @HasMany(() => SubTask)
   subTaskList!: SubTask[];

@@ -9,10 +9,10 @@ import {
   ForeignKey,
   BelongsToMany,
 } from 'sequelize-typescript';
-import { Task, TaskIncluded, User } from '../models';
+import { Task, TaskIncluded, User } from '.';
 
-@Table({ modelName: 'TaskList', tableName: 'task_list' })
-class TaskList extends Model {
+@Table({ modelName: 'GroupTask', tableName: 'group_task' })
+class GroupTask extends Model {
   // Associations
   @BelongsTo(() => User)
   user!: User;
@@ -21,7 +21,7 @@ class TaskList extends Model {
   task!: Task;
 
   // Columns
-  @Column({ type: DataType.INTEGER, primaryKey: true, autoIncrement: true, field: 'task_list_id' })
+  @Column({ type: DataType.INTEGER, primaryKey: true, autoIncrement: true, field: 'group_task_id' })
   id!: number;
 
   @ForeignKey(() => User)
@@ -40,4 +40,4 @@ class TaskList extends Model {
   updatedAt?: Date;
 }
 
-export default TaskList;
+export default GroupTask;

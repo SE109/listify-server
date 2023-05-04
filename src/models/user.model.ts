@@ -11,13 +11,13 @@ import {
   HasMany,
 } from 'sequelize-typescript';
 import bcrypt from 'bcrypt';
-import { Task, TaskList } from '../models';
+import { Task, GroupTask } from '../models';
 
 @Table({ modelName: 'User', tableName: 'users' })
 class User extends Model {
   // Associations
-  @HasMany(() => TaskList)
-  taskGroupList!: TaskList[];
+  @HasMany(() => GroupTask)
+  groupTaskList!: GroupTask[];
 
   @HasMany(() => Task)
   taskList!: Task[];
