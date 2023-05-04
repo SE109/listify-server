@@ -7,14 +7,18 @@ import {
   DataType,
   BelongsTo,
   ForeignKey,
+  BelongsToMany,
 } from 'sequelize-typescript';
-import { User } from '../models';
+import { Task, TaskIncluded, User } from '../models';
 
 @Table({ modelName: 'TaskList', tableName: 'task_list' })
 class TaskList extends Model {
   // Associations
   @BelongsTo(() => User)
   user!: User;
+
+  @BelongsToMany(() => Task, () => TaskIncluded)
+  task!: Task;
 
   // Columns
   @Column({ type: DataType.INTEGER, primaryKey: true, autoIncrement: true, field: 'task_list_id' })
