@@ -3,7 +3,7 @@ import createError from 'http-errors';
 import { GroupTask, SubTask, Task, Voice } from '../models';
 import { ResJSON } from '../utils/interface';
 
-export const getAllGroupTaskController = async (
+export const getAllGTaskController = async (
   req: Request,
   res: Response<ResJSON>,
   next: NextFunction
@@ -58,7 +58,7 @@ export const getAllGroupTaskController = async (
   }
 };
 
-export const addGroupTaskController = async (
+export const addGTaskController = async (
   req: Request<{}, {}, GroupTask>,
   res: Response<ResJSON>,
   next: NextFunction
@@ -80,6 +80,33 @@ export const addGroupTaskController = async (
       statusCode: 200,
       message: 'Added successfully',
       data: createdGroupTask,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getSingleGTaskByIdController = async (
+  req: Request<{ gtaskId: string }>,
+  res: Response<ResJSON>,
+  next: NextFunction
+) => {
+  try {
+    const { gtaskId: unconvertGtaskId } = req.params;
+    const gtaskId: number = +unconvertGtaskId;
+
+    const gtask = await GroupTask.findOne({
+      where: {
+        id: gtaskId,
+      },
+      nest: true,
+      raw: true,
+    });
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success',
+      data: gtask,
     });
   } catch (err) {
     next(err);
