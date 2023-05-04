@@ -4,5 +4,6 @@ import TaskList from './taskList.model';
 import Task from './task.model';
 import TaskIncluded from './taskIncluded.model';
 import SubTask from './subTask.model';
+import Voice from './voice.model';
 
-export { Test, User, TaskList, Task, TaskIncluded, SubTask };
+export { Test, User, TaskList, Task, TaskIncluded, SubTask, Voice };

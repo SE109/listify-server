@@ -8,8 +8,9 @@ import {
   BelongsTo,
   ForeignKey,
   BelongsToMany,
+  HasMany,
 } from 'sequelize-typescript';
-import { TaskIncluded, TaskList, User } from '../models';
+import { SubTask, TaskIncluded, TaskList, User, Voice } from '../models';
 
 @Table({ modelName: 'Task', tableName: 'task' })
 class Task extends Model {
@@ -19,6 +20,12 @@ class Task extends Model {
 
   @BelongsToMany(() => TaskList, () => TaskIncluded)
   taskList!: TaskList;
+
+  @HasMany(() => SubTask)
+  subTaskList!: SubTask[];
+
+  @HasMany(() => Voice)
+  voiceList!: Voice[];
 
   // Columns
   @Column({ type: DataType.INTEGER, primaryKey: true, autoIncrement: true, field: 'task_id' })
