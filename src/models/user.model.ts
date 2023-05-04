@@ -11,13 +11,16 @@ import {
   HasMany,
 } from 'sequelize-typescript';
 import bcrypt from 'bcrypt';
-import { TaskList } from '../models';
+import { Task, TaskList } from '../models';
 
 @Table({ modelName: 'User', tableName: 'users' })
 class User extends Model {
   // Associations
   @HasMany(() => TaskList)
   taskGroupList!: TaskList[];
+
+  @HasMany(() => Task)
+  taskList!: Task[];
 
   // Columns
   @Column({ type: DataType.STRING, primaryKey: true, field: 'mail' })
