@@ -5,6 +5,7 @@ import {
   updateInfoTaskController,
   removeTaskByIdController,
   moveTaskToGTaskController,
+  duplicateTaskController,
 } from '../controllers/task.controller';
 import { verifyAccessToken } from '../utils/jwt_service';
 
@@ -24,5 +25,8 @@ router.delete('/:taskId', verifyAccessToken, removeTaskByIdController);
 
 // [PUT] /task/{taskId}/move -> Move task to gtask
 router.put('/:taskId/move', verifyAccessToken, moveTaskToGTaskController);
+
+// [POST] /task/{taskId}/dup -> Duplicate task
+router.post('/:taskId/dup', verifyAccessToken, duplicateTaskController);
 
 export default router;

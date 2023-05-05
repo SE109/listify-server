@@ -272,3 +272,41 @@ export const moveTaskToGTaskController = async (
     next(err);
   }
 };
+
+export const duplicateTaskController = async (
+  req: Request<{ taskId: string }>,
+  res: Response<ResJSON, { payload: IPayload }>,
+  next: NextFunction
+) => {
+  try {
+    // Get userMail from previous middleware
+    const userMail = res.locals.payload.user.mail;
+
+    const { taskId: unconvertTaskId } = req.params;
+    const taskId: number = +unconvertTaskId;
+
+    const task = await Task.findOne({
+      where: {
+        id: taskId,
+        userMail,
+      },
+      raw: true,
+    });
+
+    if (!task) {
+      throw createError.BadRequest('taskId does not exist');
+    }
+
+    const { id, createdAt, updatedAt, ...newTask } = task;
+
+    const duplicatedTask = await Task.create(newTask);
+
+    res.status(201).json({
+      statusCode: 201,
+      message: 'Duplicated successfully',
+      data: removeKeys(['userMail'], duplicatedTask.dataValues),
+    });
+  } catch (err) {
+    next(err);
+  }
+};
