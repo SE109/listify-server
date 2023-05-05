@@ -6,6 +6,7 @@ import {
   removeTaskByIdController,
   moveTaskToGTaskController,
   duplicateTaskController,
+  toggleMarkTaskController,
 } from '../controllers/task.controller';
 import { verifyAccessToken } from '../utils/jwt_service';
 
@@ -28,5 +29,8 @@ router.put('/:taskId/move', verifyAccessToken, moveTaskToGTaskController);
 
 // [POST] /task/{taskId}/dup -> Duplicate task
 router.post('/:taskId/dup', verifyAccessToken, duplicateTaskController);
+
+// [PUT] /task/{taskId}/toggle-mark -> Mark/unmark done task
+router.put('/:taskId/toggle-mark', verifyAccessToken, toggleMarkTaskController);
 
 export default router;
