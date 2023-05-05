@@ -101,3 +101,47 @@ export const addTaskController = async (
     next(err);
   }
 };
+
+export const updateInfoTaskController = async (
+  req: Request<{ taskId: string }, {}, Task>,
+  res: Response<ResJSON, { payload: IPayload }>,
+  next: NextFunction
+) => {
+  try {
+    // Get userMail from previous middleware
+    const userMail = res.locals.payload.user.mail;
+
+    const { title, description, fromDate, toDate } = req.body;
+
+    const { taskId: unconvertTaskId } = req.params;
+    const taskId: number = +unconvertTaskId;
+
+    const [_, updatedTask] = await Task.update(
+      {
+        title,
+        description,
+        fromDate,
+        toDate,
+      },
+      {
+        where: {
+          id: taskId,
+          userMail,
+        },
+        returning: true,
+      }
+    );
+
+    if (updatedTask.length === 0) {
+      throw createError.BadRequest('gtaskId does not exist');
+    }
+
+    res.status(201).json({
+      statusCode: 201,
+      message: 'Updated successfully',
+      data: removeKeys(['userMail'], updatedTask[0].dataValues),
+    });
+  } catch (err) {
+    next(err);
+  }
+};
