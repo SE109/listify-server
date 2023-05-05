@@ -358,3 +358,51 @@ export const toggleMarkTaskController = async (
     next(err);
   }
 };
+
+export const toggleFavoTaskController = async (
+  req: Request<{ taskId: string }>,
+  res: Response<ResJSON, { payload: IPayload }>,
+  next: NextFunction
+) => {
+  try {
+    // Get userMail from previous middleware
+    const userMail = res.locals.payload.user.mail;
+
+    const { taskId: unconvertTaskId } = req.params;
+    const taskId: number = +unconvertTaskId;
+
+    const task = await Task.findOne({
+      where: {
+        id: taskId,
+        userMail,
+      },
+      raw: true,
+    });
+
+    if (!task) {
+      throw createError.BadRequest('taskId does not exist');
+    }
+
+    const { isFavorited } = task;
+
+    const [_, updatedTask] = await Task.update(
+      {
+        isFavorited: !isFavorited,
+      },
+      {
+        where: {
+          id: taskId,
+        },
+        returning: true,
+      }
+    );
+
+    res.status(200).json({
+      statusCode: 200,
+      message: `${isFavorited ? 'Removed' : 'Added'} favorite task successfully`,
+      data: removeKeys(['userMail'], updatedTask[0].dataValues),
+    });
+  } catch (err) {
+    next(err);
+  }
+};
