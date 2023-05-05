@@ -216,3 +216,59 @@ export const removeTaskByIdController = async (
     next(err);
   }
 };
+
+export const moveTaskToGTaskController = async (
+  req: Request<{ taskId: string }, {}, { groupTaskId: number }>,
+  res: Response<ResJSON, { payload: IPayload }>,
+  next: NextFunction
+) => {
+  try {
+    // Get userMail from previous middleware
+    const userMail = res.locals.payload.user.mail;
+
+    const { taskId: unconvertTaskId } = req.params;
+    const taskId: number = +unconvertTaskId;
+
+    const { groupTaskId } = req.body;
+
+    const task = await Task.findOne({
+      where: {
+        id: taskId,
+        userMail,
+      },
+    });
+
+    if (!task) {
+      throw createError.BadRequest('taskId does not exist');
+    }
+
+    const gtask = await GroupTask.findOne({
+      where: {
+        id: groupTaskId,
+        userMail,
+      },
+    });
+
+    if (!gtask) {
+      throw createError.BadRequest('gtaskId does not exist');
+    }
+
+    await TaskIncluded.destroy({
+      where: {
+        taskId,
+      },
+    });
+
+    await TaskIncluded.create({
+      taskId,
+      groupTaskId,
+    });
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Moved successfully',
+    });
+  } catch (err) {
+    next(err);
+  }
+};

@@ -4,6 +4,7 @@ import {
   addTaskController,
   updateInfoTaskController,
   removeTaskByIdController,
+  moveTaskToGTaskController,
 } from '../controllers/task.controller';
 import { verifyAccessToken } from '../utils/jwt_service';
 
@@ -20,5 +21,8 @@ router.put('/:taskId', verifyAccessToken, updateInfoTaskController);
 
 // [DELETE] /task/{taskId} -> Delete task by id
 router.delete('/:taskId', verifyAccessToken, removeTaskByIdController);
+
+// [PUT] /task/{taskId}/move -> Move task to gtask
+router.put('/:taskId/move', verifyAccessToken, moveTaskToGTaskController);
 
 export default router;
