@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import createError from 'http-errors';
 import { GroupTask, SubTask, Task, Voice } from '../models';
 import { ResJSON } from '../utils/interface';
+import { removeKeys } from '../utils/remove_key';
 
 export const getAllGTaskController = async (
   req: Request,
@@ -51,7 +52,7 @@ export const getAllGTaskController = async (
     res.status(200).json({
       statusCode: 200,
       message: 'Success',
-      data: groupTaskList,
+      data: removeKeys(['userMail'], groupTaskList),
     });
   } catch (err) {
     next(err);
@@ -76,10 +77,10 @@ export const addGTaskController = async (
       name,
     });
 
-    res.status(200).json({
-      statusCode: 200,
+    res.status(201).json({
+      statusCode: 201,
       message: 'Added successfully',
-      data: createdGroupTask,
+      data: removeKeys(['userMail'], createdGroupTask.dataValues),
     });
   } catch (err) {
     next(err);
@@ -107,6 +108,39 @@ export const getSingleGTaskByIdController = async (
       statusCode: 200,
       message: 'Success',
       data: gtask,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const renameGTaskByIdController = async (
+  req: Request<{ gtaskId: string }, {}, GroupTask>,
+  res: Response<ResJSON>,
+  next: NextFunction
+) => {
+  try {
+    const { gtaskId: unconvertGtaskId } = req.params;
+    const gtaskId: number = +unconvertGtaskId;
+
+    const { name } = req.body;
+
+    const [_, updatedGtask] = await GroupTask.update(
+      {
+        name,
+      },
+      {
+        where: {
+          id: gtaskId,
+        },
+        returning: true,
+      }
+    );
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Renamed successfully',
+      data: removeKeys(['userMail'], updatedGtask),
     });
   } catch (err) {
     next(err);
