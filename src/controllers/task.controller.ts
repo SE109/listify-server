@@ -3,6 +3,7 @@ import createError from 'http-errors';
 import { IPayload } from '../utils/jwt_service';
 import { ResJSON } from '../utils/interface';
 import { GroupTask, SubTask, Task, Voice } from '../models';
+import { removeKeys } from '../utils/remove_key';
 
 export const getAllTaskBelongToGTaskController = async (
   req: Request<{ gtaskId: string }>,
@@ -64,6 +65,37 @@ export const getAllTaskBelongToGTaskController = async (
       statusCode: 200,
       message: 'Success',
       data: gtask,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const addTaskController = async (
+  req: Request<{}, {}, Task>,
+  res: Response<ResJSON, { payload: IPayload }>,
+  next: NextFunction
+) => {
+  try {
+    // Get userMail from previous middleware
+    const userMail = res.locals.payload.user.mail;
+
+    const { title, description, fromDate, toDate } = req.body;
+
+    const createdTask = await Task.create({
+      userMail,
+      title,
+      description,
+      fromDate,
+      toDate,
+      isCompleted: false,
+      isFavorited: false,
+    });
+
+    res.status(201).json({
+      statusCode: 201,
+      message: 'Added successfully',
+      data: removeKeys(['userMail'], createdTask.dataValues),
     });
   } catch (err) {
     next(err);
