@@ -3,6 +3,7 @@ import {
   getAllTaskBelongToGTaskController,
   addTaskController,
   updateInfoTaskController,
+  removeTaskByIdController,
 } from '../controllers/task.controller';
 import { verifyAccessToken } from '../utils/jwt_service';
 
@@ -16,5 +17,8 @@ router.post('/', verifyAccessToken, addTaskController);
 
 // [PUT] /task/{taskId} -> Update info task
 router.put('/:taskId', verifyAccessToken, updateInfoTaskController);
+
+// [DELETE] /task/{taskId} -> Delete task by id
+router.delete('/:taskId', verifyAccessToken, removeTaskByIdController);
 
 export default router;

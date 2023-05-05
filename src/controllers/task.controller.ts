@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import createError from 'http-errors';
 import { IPayload } from '../utils/jwt_service';
 import { ResJSON } from '../utils/interface';
-import { GroupTask, SubTask, Task, Voice } from '../models';
+import { GroupTask, SubTask, Task, TaskIncluded, Voice } from '../models';
 import { removeKeys } from '../utils/remove_key';
 
 export const getAllTaskBelongToGTaskController = async (
@@ -136,10 +136,81 @@ export const updateInfoTaskController = async (
       throw createError.BadRequest('gtaskId does not exist');
     }
 
-    res.status(201).json({
-      statusCode: 201,
+    res.status(200).json({
+      statusCode: 200,
       message: 'Updated successfully',
       data: removeKeys(['userMail'], updatedTask[0].dataValues),
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const removeTaskByIdController = async (
+  req: Request<{ taskId: string }, {}, Task>,
+  res: Response<ResJSON, { payload: IPayload }>,
+  next: NextFunction
+) => {
+  try {
+    // Get userMail from previous middleware
+    const userMail = res.locals.payload.user.mail;
+
+    const { taskId: unconvertTaskId } = req.params;
+    const taskId: number = +unconvertTaskId;
+
+    const task = await Task.findOne({
+      where: {
+        id: taskId,
+        userMail,
+      },
+    });
+
+    if (!task) {
+      throw createError.BadRequest('taskId does not exist');
+    }
+
+    const removeSubTask = new Promise<void>(async (resolve) => {
+      await SubTask.destroy({
+        where: {
+          taskId,
+        },
+      });
+
+      resolve();
+    });
+
+    const removeVoice = new Promise<void>(async (resolve) => {
+      await Voice.destroy({
+        where: {
+          taskId,
+        },
+      });
+
+      resolve();
+    });
+
+    const removeTaskInclude = new Promise<void>(async (resolve) => {
+      await TaskIncluded.destroy({
+        where: {
+          taskId,
+        },
+      });
+
+      resolve();
+    });
+
+    await Promise.all([removeSubTask, removeVoice, removeTaskInclude]);
+
+    await Task.destroy({
+      where: {
+        id: taskId,
+        userMail,
+      },
+    });
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Deleted successfully',
     });
   } catch (err) {
     next(err);

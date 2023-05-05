@@ -22,7 +22,7 @@ class SubTask extends Model {
 
   @ForeignKey(() => Task)
   @Column({ type: DataType.INTEGER, field: 'task_id' })
-  taskId!: string;
+  taskId!: number;
 
   @Column({ type: DataType.STRING, field: 'title' })
   title!: string;

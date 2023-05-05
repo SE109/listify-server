@@ -3,6 +3,7 @@ import createError, { HttpError } from 'http-errors';
 import route from './routes';
 import cookieParser from 'cookie-parser';
 import { sequelize } from './configs/sequelize';
+import { ResJSON } from './utils/interface';
 
 const app: Express = express();
 
@@ -24,10 +25,11 @@ app.use((req, res, next: NextFunction) => {
   next(createError.NotFound('This route does not exist.'));
 });
 
-app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
-  res.status(err.status || 500).json({
-    status: err.status || 500,
+app.use((err: HttpError, req: Request, res: Response<ResJSON>, next: NextFunction) => {
+  res.status(err.statusCode || 500).json({
+    statusCode: err.statusCode || 500,
     message: err.message,
+    error: err.name,
   });
 });
 
