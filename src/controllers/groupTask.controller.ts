@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import createError from 'http-errors';
-import { GroupTask, SubTask, Task, Voice } from '../models';
+import { GroupTask, SubTask, Task, TaskIncluded, Voice } from '../models';
 import { ResJSON } from '../utils/interface';
 import { removeKeys } from '../utils/remove_key';
+import { Op } from 'sequelize';
 
 export const getAllGTaskController = async (
   req: Request,
@@ -45,14 +46,12 @@ export const getAllGTaskController = async (
           },
         },
       ],
-      nest: true,
-      raw: true,
     });
 
     res.status(200).json({
       statusCode: 200,
       message: 'Success',
-      data: removeKeys(['userMail'], groupTaskList),
+      data: groupTaskList,
     });
   } catch (err) {
     next(err);
@@ -96,12 +95,17 @@ export const getSingleGTaskByIdController = async (
     const { gtaskId: unconvertGtaskId } = req.params;
     const gtaskId: number = +unconvertGtaskId;
 
+    if (!gtaskId) {
+      throw createError.BadRequest('Missing params');
+    }
+
     const gtask = await GroupTask.findOne({
       where: {
         id: gtaskId,
       },
-      nest: true,
-      raw: true,
+      attributes: {
+        exclude: ['userMail'],
+      },
     });
 
     res.status(200).json({
@@ -123,6 +127,21 @@ export const renameGTaskByIdController = async (
     const { gtaskId: unconvertGtaskId } = req.params;
     const gtaskId: number = +unconvertGtaskId;
 
+    if (!gtaskId) {
+      throw createError.BadRequest('Missing params');
+    }
+
+    const gtask = await GroupTask.findOne({
+      where: {
+        id: gtaskId,
+      },
+      raw: true,
+    });
+
+    if (!gtask) {
+      throw createError.BadRequest('gtaskId does not exist');
+    }
+
     const { name } = req.body;
 
     const [_, updatedGtask] = await GroupTask.update(
@@ -140,7 +159,69 @@ export const renameGTaskByIdController = async (
     res.status(200).json({
       statusCode: 200,
       message: 'Renamed successfully',
-      data: removeKeys(['userMail'], updatedGtask),
+      data: removeKeys(['userMail'], updatedGtask[0].dataValues),
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const removeGTaskByIdController = async (
+  req: Request<{ gtaskId: string }, {}, GroupTask>,
+  res: Response<ResJSON>,
+  next: NextFunction
+) => {
+  try {
+    const { gtaskId: unconvertGtaskId } = req.params;
+    const gtaskId: number = +unconvertGtaskId;
+
+    if (!gtaskId) {
+      throw createError.BadRequest('Missing params');
+    }
+
+    const gtask = await GroupTask.findOne({
+      where: {
+        id: gtaskId,
+      },
+      raw: true,
+    });
+
+    if (!gtask) {
+      throw createError.BadRequest('gtaskId does not exist');
+    }
+
+    const taskListBelongToGTask = await TaskIncluded.findAll({
+      where: {
+        groupTaskId: gtaskId,
+      },
+      attributes: ['taskId'],
+      raw: true,
+    });
+
+    const taskIdList = taskListBelongToGTask.map((curVal) => curVal.taskId);
+
+    const unmarkTaskList = await Task.findAll({
+      where: {
+        id: {
+          [Op.in]: taskIdList,
+        },
+        isCompleted: false,
+      },
+    });
+
+    if (unmarkTaskList.length > 0) {
+      throw createError.Conflict('GroupTask cannot be deleted because it still unmark task');
+    }
+
+    await GroupTask.destroy({
+      where: {
+        id: gtaskId,
+      },
+    });
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Deleted successfully',
     });
   } catch (err) {
     next(err);

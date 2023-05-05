@@ -5,6 +5,7 @@ import {
   addGTaskController,
   getSingleGTaskByIdController,
   renameGTaskByIdController,
+  removeGTaskByIdController,
 } from '../controllers/groupTask.controller';
 
 const router: Router = Router();
@@ -20,5 +21,8 @@ router.get('/:gtaskId', verifyAccessToken, getSingleGTaskByIdController);
 
 // [PUT] /gtask/{gtaskId} -> Rename gtask by id
 router.put('/:gtaskId', verifyAccessToken, renameGTaskByIdController);
+
+// [DELETE] /gtask/{gtaskId} -> Remove gtask by id
+router.delete('/:gtaskId', verifyAccessToken, removeGTaskByIdController);
 
 export default router;
