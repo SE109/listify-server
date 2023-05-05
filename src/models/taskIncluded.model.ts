@@ -18,7 +18,7 @@ class TaskIncluded extends Model {
 
   @ForeignKey(() => GroupTask)
   @Column({ type: DataType.INTEGER, primaryKey: true, field: 'group_task_id' })
-  groupTaskId!: string;
+  groupTaskId!: number;
 
   @CreatedAt
   @Column({ type: DataType.DATE, field: 'created_at' })
