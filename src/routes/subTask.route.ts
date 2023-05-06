@@ -4,6 +4,7 @@ import {
   getSingleSubtaskByIdController,
   addSubtaskController,
   updateTitleSubtaskByIdController,
+  removeSubtaskByIdController,
 } from '../controllers/subTask.controller';
 import { verifyAccessToken } from '../utils/jwt_service';
 
@@ -20,5 +21,8 @@ router.post('/', verifyAccessToken, addSubtaskController);
 
 // [PUT] /subtask/{subtaskId} -> Update title subtask by id
 router.put('/:subtaskId', verifyAccessToken, updateTitleSubtaskByIdController);
+
+// [DELETE] /subtask/{subtaskId} -> Delete subtask by id
+router.delete('/:subtaskId', verifyAccessToken, removeSubtaskByIdController);
 
 export default router;
