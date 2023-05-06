@@ -91,3 +91,42 @@ export const getSingleVoiceByIdController = async (
     next(err);
   }
 };
+
+export const addVoiceController = async (
+  req: Request<{}, {}, Voice>,
+  res: Response<ResJSON, { payload: IPayload }>,
+  next: NextFunction
+) => {
+  try {
+    // Get userMail from previous middleware
+    const userMail = res.locals.payload.user.mail;
+
+    const { taskId, name, file } = req.body;
+
+    const task = await Task.findOne({
+      where: {
+        id: taskId,
+        userMail,
+      },
+      raw: true,
+    });
+
+    if (!task) {
+      throw createError.BadRequest('taskId does not exist');
+    }
+
+    const createdVoice = await Voice.create({
+      taskId,
+      name,
+      file,
+    });
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Added successfully',
+      data: createdVoice,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
