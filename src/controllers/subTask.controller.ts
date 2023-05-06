@@ -236,3 +236,59 @@ export const removeSubtaskByIdController = async (
     next(err);
   }
 };
+
+export const toggleMarkSubtaskController = async (
+  req: Request<{ subtaskId: string }>,
+  res: Response<ResJSON, { payload: IPayload }>,
+  next: NextFunction
+) => {
+  try {
+    // Get userMail from previous middleware
+    const userMail = res.locals.payload.user.mail;
+
+    const { subtaskId: unconvertSubtaskId } = req.params;
+    const subtaskId: number = +unconvertSubtaskId;
+
+    const task = await Task.findOne({
+      where: {
+        userMail,
+      },
+      include: {
+        model: SubTask,
+        where: {
+          id: subtaskId,
+        },
+        attributes: {
+          exclude: ['taskId', 'updatedAt', 'createdAt'],
+        },
+      },
+      nest: true,
+    });
+
+    if (!task) {
+      throw createError.BadRequest('subtaskId does not exist');
+    }
+
+    const { isCompleted } = task.subTaskList[0];
+
+    const [_, updatedSubtask] = await SubTask.update(
+      {
+        isCompleted: !isCompleted,
+      },
+      {
+        where: {
+          id: subtaskId,
+        },
+        returning: true,
+      }
+    );
+
+    res.status(200).json({
+      statusCode: 200,
+      message: `${isCompleted ? 'Unmarked' : 'Marked'} successfully`,
+      data: removeKeys(['userMail'], updatedSubtask[0].dataValues),
+    });
+  } catch (err) {
+    next(err);
+  }
+};
