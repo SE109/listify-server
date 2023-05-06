@@ -4,6 +4,7 @@ import {
   getSingleVoiceByIdController,
   addVoiceController,
   updateVoiceByIdController,
+  removeVoiceByIdController,
 } from '../controllers/voice.controller';
 import { verifyAccessToken } from '../utils/jwt_service';
 
@@ -20,5 +21,8 @@ router.post('/', verifyAccessToken, addVoiceController);
 
 // [PUT] /voice/{voiceId} -> Update voice by id
 router.put('/:voiceId', verifyAccessToken, updateVoiceByIdController);
+
+// [DELETE] /voice/{voiceId} -> Delete voice by id
+router.delete('/:voiceId', verifyAccessToken, removeVoiceByIdController);
 
 export default router;

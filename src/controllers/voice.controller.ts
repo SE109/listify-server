@@ -189,3 +189,51 @@ export const updateVoiceByIdController = async (
     next(err);
   }
 };
+
+export const removeVoiceByIdController = async (
+  req: Request<{ voiceId: string }, {}, Voice>,
+  res: Response<ResJSON, { payload: IPayload }>,
+  next: NextFunction
+) => {
+  try {
+    // Get userMail from previous middleware
+    const userMail = res.locals.payload.user.mail;
+
+    const { voiceId: unconvertVoiceId } = req.params;
+    const voiceId: number = +unconvertVoiceId;
+
+    const task = await Task.findOne({
+      where: {
+        userMail,
+      },
+      include: {
+        model: Voice,
+        where: {
+          id: voiceId,
+        },
+        attributes: {
+          exclude: ['taskId', 'updatedAt', 'createdAt'],
+        },
+      },
+      raw: true,
+      nest: true,
+    });
+
+    if (!task) {
+      throw createError.BadRequest('voiceId does not exist');
+    }
+
+    await Voice.destroy({
+      where: {
+        id: voiceId,
+      },
+    });
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Deleted successfully',
+    });
+  } catch (err) {
+    next(err);
+  }
+};
