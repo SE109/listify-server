@@ -3,6 +3,7 @@ import createError from 'http-errors';
 import { ResJSON } from '../utils/interface';
 import { IPayload } from '../utils/jwt_service';
 import { SubTask, Task } from '../models';
+import { removeKeys } from '../utils/remove_key';
 
 export const getAllSubtaskBelongToTaskController = async (
   req: Request<{ taskId: string }>,
@@ -123,6 +124,63 @@ export const addSubtaskController = async (
       statusCode: 201,
       message: 'Added successfully',
       data: subtaskCreated,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateTitleSubtaskByIdController = async (
+  req: Request<{ subtaskId: string }, {}, SubTask>,
+  res: Response<ResJSON, { payload: IPayload }>,
+  next: NextFunction
+) => {
+  try {
+    // Get userMail from previous middleware
+    const userMail = res.locals.payload.user.mail;
+
+    const { title } = req.body;
+
+    const { subtaskId: unconvertSubtaskId } = req.params;
+    const subtaskId: number = +unconvertSubtaskId;
+
+    const task = await Task.findOne({
+      where: {
+        userMail,
+      },
+      include: {
+        model: SubTask,
+        where: {
+          id: subtaskId,
+        },
+        attributes: {
+          exclude: ['taskId', 'updatedAt', 'createdAt'],
+        },
+      },
+      raw: true,
+      nest: true,
+    });
+
+    if (!task) {
+      throw createError.BadRequest('subtaskId does not exist');
+    }
+
+    const [_, updatedSubtask] = await SubTask.update(
+      {
+        title,
+      },
+      {
+        where: {
+          id: subtaskId,
+        },
+        returning: true,
+      }
+    );
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Updated successfully',
+      data: removeKeys(['taskId', 'createdAt', 'updatedAt'], updatedSubtask[0].dataValues),
     });
   } catch (err) {
     next(err);

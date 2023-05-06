@@ -3,6 +3,7 @@ import {
   getAllSubtaskBelongToTaskController,
   getSingleSubtaskByIdController,
   addSubtaskController,
+  updateTitleSubtaskByIdController,
 } from '../controllers/subTask.controller';
 import { verifyAccessToken } from '../utils/jwt_service';
 
@@ -16,5 +17,8 @@ router.get('/:subtaskId', verifyAccessToken, getSingleSubtaskByIdController);
 
 // [POST] /subtask -> Create new subtask
 router.post('/', verifyAccessToken, addSubtaskController);
+
+// [PUT] /subtask/{subtaskId} -> Update title subtask by id
+router.put('/:subtaskId', verifyAccessToken, updateTitleSubtaskByIdController);
 
 export default router;
