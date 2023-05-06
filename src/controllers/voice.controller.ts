@@ -122,8 +122,8 @@ export const addVoiceController = async (
       file,
     });
 
-    res.status(200).json({
-      statusCode: 200,
+    res.status(201).json({
+      statusCode: 201,
       message: 'Added successfully',
       data: createdVoice,
     });

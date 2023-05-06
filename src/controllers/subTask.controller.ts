@@ -89,3 +89,42 @@ export const getSingleSubtaskByIdController = async (
     next(err);
   }
 };
+
+export const addSubtaskController = async (
+  req: Request<{}, {}, SubTask>,
+  res: Response<ResJSON, { payload: IPayload }>,
+  next: NextFunction
+) => {
+  try {
+    // Get userMail from previous middleware
+    const userMail = res.locals.payload.user.mail;
+
+    const { taskId, title } = req.body;
+
+    const task = await Task.findOne({
+      where: {
+        id: taskId,
+        userMail,
+      },
+      raw: true,
+    });
+
+    if (!task) {
+      throw createError.BadRequest('taskId does not exist');
+    }
+
+    const subtaskCreated = await SubTask.create({
+      taskId,
+      title,
+      isCompleted: false,
+    });
+
+    res.status(201).json({
+      statusCode: 201,
+      message: 'Added successfully',
+      data: subtaskCreated,
+    });
+  } catch (err) {
+    next(err);
+  }
+};

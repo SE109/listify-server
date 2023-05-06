@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   getAllSubtaskBelongToTaskController,
   getSingleSubtaskByIdController,
+  addSubtaskController,
 } from '../controllers/subTask.controller';
 import { verifyAccessToken } from '../utils/jwt_service';
 
@@ -12,5 +13,8 @@ router.get('/tid/:taskId', verifyAccessToken, getAllSubtaskBelongToTaskControlle
 
 // [GET] /subtask/{subtaskId} -> Get single subtask by id
 router.get('/:subtaskId', verifyAccessToken, getSingleSubtaskByIdController);
+
+// [POST] /subtask -> Create new subtask
+router.post('/', verifyAccessToken, addSubtaskController);
 
 export default router;
