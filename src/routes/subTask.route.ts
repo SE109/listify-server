@@ -6,6 +6,7 @@ import {
   updateTitleSubtaskByIdController,
   removeSubtaskByIdController,
   toggleMarkSubtaskController,
+  duplicateSubtaskController,
 } from '../controllers/subTask.controller';
 import { verifyAccessToken } from '../utils/jwt_service';
 
@@ -28,5 +29,8 @@ router.delete('/:subtaskId', verifyAccessToken, removeSubtaskByIdController);
 
 // [PUT] /subtask/{subtaskId}/toggle-mark -> Mark/unmark done Subtask
 router.put('/:subtaskId/toggle-mark', verifyAccessToken, toggleMarkSubtaskController);
+
+// [POST] /subtask/{subtaskId}/dup -> Duplicate Subtask
+router.post('/:subtaskId/dup', verifyAccessToken, duplicateSubtaskController);
 
 export default router;

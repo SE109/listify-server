@@ -292,3 +292,53 @@ export const toggleMarkSubtaskController = async (
     next(err);
   }
 };
+
+export const duplicateSubtaskController = async (
+  req: Request<{ subtaskId: string }>,
+  res: Response<ResJSON, { payload: IPayload }>,
+  next: NextFunction
+) => {
+  try {
+    // Get userMail from previous middleware
+    const userMail = res.locals.payload.user.mail;
+
+    const { subtaskId: unconvertSubtaskId } = req.params;
+    const subtaskId: number = +unconvertSubtaskId;
+
+    const task = await Task.findOne({
+      where: {
+        userMail,
+      },
+      include: {
+        model: SubTask,
+        where: {
+          id: subtaskId,
+        },
+        attributes: {
+          exclude: ['updatedAt', 'createdAt'],
+        },
+      },
+      nest: true,
+    });
+
+    if (!task) {
+      throw createError.BadRequest('subtaskId does not exist');
+    }
+
+    const { taskId, title } = task.subTaskList[0];
+
+    const duplicatedSubtask = await SubTask.create({
+      taskId,
+      title,
+      isCompleted: false,
+    });
+
+    res.status(201).json({
+      statusCode: 201,
+      message: 'Duplicated successfully',
+      data: duplicatedSubtask,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
