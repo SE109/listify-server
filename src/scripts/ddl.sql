@@ -48,14 +48,14 @@ FOR EACH ROW
 EXECUTE PROCEDURE update_timestamp();
 
 -- CREATE TABLE TASKINCLUDED:
-CREATE TABLE task_include(
+CREATE TABLE task_included(
 	group_task_id INTEGER NOT NULL REFERENCES group_task(group_task_id),
 	task_id INTEGER NOT NULL REFERENCES task(task_id),
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TRIGGER update_db_timestamp BEFORE UPDATE
-ON task_include
+ON task_included
 FOR EACH ROW
 EXECUTE PROCEDURE update_timestamp();
 

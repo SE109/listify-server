@@ -19,7 +19,7 @@ class User extends Model {
   @HasMany(() => GroupTask)
   groupTaskList!: GroupTask[];
 
-  @HasMany(() => Task)
+  @HasMany(() => Task, { as: 'nonelistedTaskList' })
   taskList!: Task[];
 
   // Columns
