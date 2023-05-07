@@ -17,6 +17,12 @@
  *           type: integer
  *         description: The numbers of items to return
  *       - in: query
+ *         name: page
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The offset based on limit
+ *       - in: query
  *         name: content
  *         required: true
  *         schema:

@@ -45,7 +45,7 @@
  *               $ref: '#/components/schemas/JsonRespond'
  *             example:
  *               statusCode: 200
- *               message: Update avatar successfully
+ *               message: Updated avatar successfully
  */
 
 /**
@@ -75,7 +75,7 @@
  *                 firstName: Phúc
  *                 lastName: Hoàng
  *                 avatar: new link avatar
- *                 groupTask:
+ *                 groupTaskList:
  *                   - id: 1
  *                     name: Homework
  *                     taskList:
@@ -148,7 +148,21 @@
  *                         updatedAt: 2023-04-19T14:04:40.113Z
  *                     createdAt: 2023-04-19T14:04:40.113Z
  *                     updatedAt: 2023-04-19T14:04:40.113Z
- *                 gender: true
+ *                 nonelistedTaskList:
+ *                   - id: 21
+ *                     title: Eugen
+ *                     description: Université de Montpellier I
+ *                     fromDate: 2023-04-26
+ *                     toDate: 2023-05-12
+ *                     isCompleted: true
+ *                     isFavorited: true
+ *                   - id: 22
+ *                     title: Kelley
+ *                     description: Maria Grzegorzewska College for Special Education
+ *                     fromDate: 2023-05-03
+ *                     toDate: 2023-05-10
+ *                     isCompleted: false
+ *                     isFavorited: false
  *                 phoneNum: "0967781796"
  *                 dateOfBirth: 2023-04-19T14:04:40.113Z
  *                 registeredAt: 2023-04-19T14:04:40.113Z
@@ -173,9 +187,7 @@
  *          example:
  *            firstName: Phúc
  *            lastName: Hoàng
- *            avatar: new link avatar
- *            gender: true
- *            phoneNum: 0967781796
+ *            phoneNum: '0967781796'
  *            dateOfBirth: 2023-04-19T14:04:40.113Z
  *     responses:
  *       200:
@@ -218,7 +230,8 @@
  *           schema:
  *             $ref: '#/components/schemas/User'
  *           example:
- *             password: tuannt02
+ *             oldPassword: tuannt01
+ *             newPassword: tuannt02
  *     responses:
  *       200:
  *         description: Return the information of the newly updated User
@@ -228,7 +241,7 @@
  *               $ref: '#/components/schemas/JsonRespond'
  *             example:
  *               statusCode: 200
- *               message: Update password successfully
+ *               message: Changed password successfully
  */
 
 /**

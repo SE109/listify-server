@@ -1,22 +1,19 @@
 // ! Defind path
 
 /**
- * TODO: [GET] /task/b-gtask -> Get all task belong to GroupTask
+ * TODO: [GET] /task/b-gtask/{gtaskId} -> Get all task belong to GroupTask
  * @swagger
- * /task/b-gtask:
+ * /task/b-gtask/{gtaskId}:
  *   get:
  *     summary: Get all task belong to GroupTask
  *     tags: [Task]
  *     security:
  *       - bearerAuth: []
- *     requestBody:
- *       description: Provide an object containing group task id
- *       content:
- *        application/json:
- *          schema:
- *            $ref: '#/components/schemas/Task'
- *          example:
- *            taskGroupId: 1
+ *     parameters:
+ *       - in: path
+ *         name: gtaskId
+ *         required: true
+ *         description: The group task id
  *     responses:
  *       200:
  *         description: Return a list task
@@ -59,6 +56,7 @@
  * @swagger
  * /task/findByType:
  *   get:
+ *     deprecated: true
  *     summary: Find by type
  *     tags: [Task]
  *     security:

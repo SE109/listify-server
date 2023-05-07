@@ -1,24 +1,19 @@
 // ! Defind path
 
 /**
- * TODO: [GET] /voice -> Get all voice of task
+ * TODO: [GET] /voice/vtask/{taskId} -> Get all voice of task
  * @swagger
- * /voice:
+ * /voice/vtask/{taskId}:
  *   get:
  *     summary: Get all voice of task
  *     tags: [Voice]
  *     security:
  *       - bearerAuth: []
- *     requestBody:
- *       description: Provide an object containing task id
- *       content:
- *        application/json:
- *          schema:
- *            type: object
- *            properties:
- *              taskId: integer
- *            example:
- *              taskId: 1
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         description: The task id
  *     responses:
  *       200:
  *         description: Return a list voice
@@ -47,6 +42,42 @@
  *                   file: link2
  *                   createdAt: 2023-04-19T14:04:40.113Z
  *                   updatedAt: 2023-04-19T14:04:40.113Z
+ */
+
+/**
+ * TODO: [GET] /voice/{voiceId} -> Get single voice by id
+ * @swagger
+ * /voice/{voiceId}:
+ *   get:
+ *     summary: Get single voice by id
+ *     tags: [Voice]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: voiceId
+ *         required: true
+ *         description: The voice id
+ *     responses:
+ *       200:
+ *         description: Return a voice item
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/JsonRespond'
+ *             properties:
+ *               data:
+ *                 $ref: '#/components/schemas/Voice'
+ *             example:
+ *               statusCode: 200
+ *               message: Success
+ *               data:
+ *                 id: 1
+ *                 taskId: 1
+ *                 name: dosth1
+ *                 file: link1
+ *                 createdAt: 2023-04-19T14:04:40.113Z
+ *                 updatedAt: 2023-04-19T14:04:40.113Z
  */
 
 /**
@@ -94,7 +125,7 @@
  * TODO: [PUT] /voice/{voiceId} -> Update voice by id
  * @swagger
  * /voice/{voiceId}:
- *   post:
+ *   put:
  *     summary: Update voice by id
  *     tags: [Voice]
  *     security:

@@ -1,25 +1,19 @@
 // ! Defind path
 
 /**
- * TODO: [GET] /subtask -> Get all subtask belong to Task
+ * TODO: [GET] /subtask/tid/{taskId} -> Get all subtask belong to Task
  * @swagger
- * /subtask:
+ * /subtask/tid/{taskId}:
  *   get:
  *     summary: Get all subtask belong to Task
  *     tags: [Subtask]
  *     security:
  *       - bearerAuth: []
- *     requestBody:
- *       description: Provide an object containing task id
- *       content:
- *        application/json:
- *          schema:
- *            type: object
- *            properties:
- *              taskId:
- *                type: integer
- *            example:
- *              taskId: 1
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         description: The taskId id
  *     responses:
  *       200:
  *         description: Return a list subtask
@@ -48,6 +42,42 @@
  *                   isCompleted: false
  *                   createdAt: 2023-04-19T14:04:40.113Z
  *                   updatedAt: 2023-04-19T14:04:40.113Z
+ */
+
+/**
+ * TODO: [GET] /subtask/{subtaskId} -> Get single subtask by id
+ * @swagger
+ * /subtask/{subtaskId}:
+ *   get:
+ *     summary: Get single subtask by id
+ *     tags: [Subtask]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: subtaskId
+ *         required: true
+ *         description: The subtaskId id
+ *     responses:
+ *       200:
+ *         description: Return a subtask item
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/JsonRespond'
+ *             properties:
+ *               data:
+ *                 $ref: '#/components/schemas/Subtask'
+ *             example:
+ *               statusCode: 200
+ *               message: Success
+ *               data:
+ *                 id: 1
+ *                 taskId: 1
+ *                 title: Subtask1
+ *                 isCompleted: true
+ *                 createdAt: 2023-04-19T14:04:40.113Z
+ *                 updatedAt: 2023-04-19T14:04:40.113Z
  */
 
 /**
