@@ -4,6 +4,7 @@ import {
   updateAvatarController,
   getInfoController,
   updateInfoController,
+  updatePasswordController,
 } from '../controllers/user.controller';
 
 const router: Router = Router();
@@ -16,5 +17,8 @@ router.get('/get-info', verifyAccessToken, getInfoController);
 
 // [PUT] /user/update-info -> Update information of user
 router.put('/update-info', verifyAccessToken, updateInfoController);
+
+// [PUT] /user/change-password -> Update password
+router.put('/change-password', verifyAccessToken, updatePasswordController);
 
 export default router;

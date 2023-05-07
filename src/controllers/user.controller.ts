@@ -5,6 +5,7 @@ import { IPayload } from '../utils/jwt_service';
 import { GroupTask, SubTask, Task, TaskIncluded, User, Voice } from '../models';
 import { removeKeys } from '../utils/remove_key';
 import { Op } from 'sequelize';
+import bcrypt from 'bcrypt';
 
 export const updateAvatarController = async (
   req: Request<{}, {}, User>,
@@ -160,6 +161,57 @@ export const updateInfoController = async (
         ['password', 'refreshToken', 'createdAt', 'updatedAt'],
         updatedUserInfor[0].dataValues
       ),
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updatePasswordController = async (
+  req: Request<{}, {}, { oldPassword: string; newPassword: string }>,
+  res: Response<ResJSON, { payload: IPayload }>,
+  next: NextFunction
+) => {
+  try {
+    // Get userMail from previous middleware
+    const userMail = res.locals.payload.user.mail;
+
+    const { oldPassword, newPassword } = req.body;
+
+    // Check match oldPassword
+    const user = await User.findByPk(userMail, {
+      attributes: ['password'],
+    });
+
+    if (!user) {
+      throw createError.InternalServerError('Maybe wrong something');
+    }
+
+    const hashPassword = user.password;
+    const isMatch = await bcrypt.compare(oldPassword, hashPassword);
+
+    if (!isMatch) {
+      throw createError.Unauthorized('Wrong password');
+    }
+
+    // Set password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    await User.update(
+      {
+        password: hashedPassword,
+      },
+      {
+        where: {
+          mail: userMail,
+        },
+      }
+    );
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Changed password successfully',
     });
   } catch (err) {
     next(err);
