@@ -126,3 +126,42 @@ export const getInfoController = async (
     next(err);
   }
 };
+
+export const updateInfoController = async (
+  req: Request<{}, {}, User>,
+  res: Response<ResJSON, { payload: IPayload }>,
+  next: NextFunction
+) => {
+  try {
+    // Get userMail from previous middleware
+    const userMail = res.locals.payload.user.mail;
+
+    const { firstName, lastName, phoneNum, dateOfBirth } = req.body;
+
+    const [_, updatedUserInfor] = await User.update(
+      {
+        firstName,
+        lastName,
+        phoneNum,
+        dateOfBirth,
+      },
+      {
+        where: {
+          mail: userMail,
+        },
+        returning: true,
+      }
+    );
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Updated successfully',
+      data: removeKeys(
+        ['password', 'refreshToken', 'createdAt', 'updatedAt'],
+        updatedUserInfor[0].dataValues
+      ),
+    });
+  } catch (err) {
+    next(err);
+  }
+};
