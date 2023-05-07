@@ -7,6 +7,7 @@ import groupTaskRoute from './groupTask.route';
 import taskRoute from './task.route';
 import subTaskRoute from './subTask.route';
 import voiceRoute from './voice.route';
+import searchRoute from './search.route';
 import apiDocsRoute from './api-docs.route';
 
 const route = (app: Express) => {
@@ -17,6 +18,7 @@ const route = (app: Express) => {
   app.use('/task', taskRoute);
   app.use('/subtask', subTaskRoute);
   app.use('/voice', voiceRoute);
+  app.use('/search', searchRoute);
   app.use('/test', testRoute);
 };
 

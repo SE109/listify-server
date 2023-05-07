@@ -2,12 +2,19 @@ import express, { Express, Request, Response, NextFunction } from 'express';
 import createError, { HttpError } from 'http-errors';
 import route from './routes';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import { sequelize } from './configs/sequelize';
 import { ResJSON } from './utils/interface';
 
 const app: Express = express();
 
 // Apply middleware
+// app.use(
+//   cors({
+//     origin: '*',
+//     credentials: true,
+//   })
+// );
 app.use(express.json()); // req.body
 app.use(cookieParser()); // Allow server read cookie
 app.use(express.urlencoded({ extended: true }));
