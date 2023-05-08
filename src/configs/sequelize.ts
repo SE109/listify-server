@@ -17,6 +17,12 @@ const sequelize = new Sequelize(
   }
 );
 
+// Create database `listify` if not exists
+sequelize
+  .query(`CREATE DATABASE IF NOT EXISTS \`${process.env.PG_DATABASE}\`;`)
+  .then(() => console.log(`DATABASE with name \`${process.env.PG_DATABASE}\` created`))
+  .catch(() => console.log(`DATABASE with name \`${process.env.PG_DATABASE}\` existed`));
+
 // Check connection to PostgreeDB
 sequelize
   .authenticate()

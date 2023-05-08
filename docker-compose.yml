@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+  server:
+    container_name: server
+    image: server:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '5000:5000'
+    restart: always
+    depends_on:
+      - postgres
+      - pgadmin
+    environment:
+      # - REDIS_HOST=redis
+      # - REDIS_PORT=6379
+      - PG_HOST=postgres
+      - PG_USER=postgres
+      - PG_PASSWORD=changeme
+      - PG_PORT = 5432
+      - PG_DATABASE = listify
+
+  postgres:
+    container_name: postgres
+    image: postgres
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=changeme
+      - POSTGRES_DB=listify
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    restart: always
+    command: postgres -c listen_addresses='*'
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=pgadmin4@pgadmin.org
+      - PGADMIN_DEFAULT_PASSWORD=admin
+      - PGADMIN_CONFIG_SERVER_MODE=False
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    restart: always
+    ports:
+      - '3030:80'
+    depends_on:
+      - postgres
+
+volumes:
+  postgres:
+  pgadmin:
+  # redis-data:
