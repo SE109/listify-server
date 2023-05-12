@@ -21,7 +21,10 @@ const options: swaggerJSDoc.OAS3Options = {
       },
     },
   },
-  apis: [path.join(__dirname, '..', 'docs', '*', '*.ts')],
+  apis: [
+    path.join(__dirname, '..', 'docs', '*', '*.ts'),
+    path.join(__dirname, '..', 'docs', '*', '*.js'),
+  ],
 };
 
 const spec = swaggerJSDoc(options);
