@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { User } from '../models';
+import { GroupTask, User } from '../models';
 import createError from 'http-errors';
 import bcrypt from 'bcrypt';
 import {
@@ -53,6 +53,12 @@ export const registerController = async (
       lastName,
       firstName,
       phoneNum,
+    });
+
+    // Create today gtask
+    await GroupTask.create({
+      userMail: email,
+      name: 'Today',
     });
 
     res.status(201).json({
