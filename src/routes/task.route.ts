@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   getAllTaskBelongToGTaskController,
+  getAllFavoriteTaskBelongToUserController,
   addTaskController,
   updateInfoTaskController,
   removeTaskByIdController,
@@ -13,8 +14,11 @@ import { verifyAccessToken } from '../utils/jwt_service';
 
 const router: Router = Router();
 
-// [GET] /task/b-gtask -> Get all task belong to gtask
+// [GET] /task/b-gtask/{gtaskId} -> Get all task belong to gtask
 router.get('/b-gtask/:gtaskId', verifyAccessToken, getAllTaskBelongToGTaskController);
+
+// [GET] /task/fav -> Get all favorite task belong to user
+router.get('/fav', verifyAccessToken, getAllFavoriteTaskBelongToUserController);
 
 // [POST] /task -> Create new task
 router.post('/', verifyAccessToken, addTaskController);

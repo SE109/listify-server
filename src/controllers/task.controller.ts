@@ -71,6 +71,35 @@ export const getAllTaskBelongToGTaskController = async (
   }
 };
 
+export const getAllFavoriteTaskBelongToUserController = async (
+  req: Request,
+  res: Response<ResJSON, { payload: IPayload }>,
+  next: NextFunction
+) => {
+  try {
+    // Get userMail from previous middleware
+    const userMail = res.locals.payload.user.mail;
+
+    const favoriteTaskList = await Task.findAll({
+      where: {
+        userMail,
+        isFavorited: true,
+      },
+      attributes: {
+        exclude: ['userMail', 'createdAt', 'updatedAt'],
+      },
+    });
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Success',
+      data: favoriteTaskList,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const addTaskController = async (
   req: Request<{}, {}, Task>,
   res: Response<ResJSON, { payload: IPayload }>,
