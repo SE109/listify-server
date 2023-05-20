@@ -176,7 +176,7 @@ export const updateInfoTaskController = async (
 };
 
 export const removeTaskByIdController = async (
-  req: Request<{ taskId: string }, {}, Task>,
+  req: Request<{ taskId: string }>,
   res: Response<ResJSON, { payload: IPayload }>,
   next: NextFunction
 ) => {
@@ -234,6 +234,44 @@ export const removeTaskByIdController = async (
       where: {
         id: taskId,
         userMail,
+      },
+    });
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Deleted successfully',
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const clearAllSubtaskBelongToTaskController = async (
+  req: Request<{ taskId: string }>,
+  res: Response<ResJSON, { payload: IPayload }>,
+  next: NextFunction
+) => {
+  try {
+    // Get userMail from previous middleware
+    const userMail = res.locals.payload.user.mail;
+
+    const { taskId: unconvertTaskId } = req.params;
+    const taskId: number = +unconvertTaskId;
+
+    const task = await Task.findOne({
+      where: {
+        id: taskId,
+        userMail,
+      },
+    });
+
+    if (!task) {
+      throw createError.BadRequest('taskId does not exist');
+    }
+
+    await SubTask.destroy({
+      where: {
+        taskId,
       },
     });
 

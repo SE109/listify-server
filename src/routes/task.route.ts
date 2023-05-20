@@ -5,6 +5,7 @@ import {
   addTaskController,
   updateInfoTaskController,
   removeTaskByIdController,
+  clearAllSubtaskBelongToTaskController,
   moveTaskToGTaskController,
   duplicateTaskController,
   toggleMarkTaskController,
@@ -28,6 +29,9 @@ router.put('/:taskId', verifyAccessToken, updateInfoTaskController);
 
 // [DELETE] /task/{taskId} -> Delete task by id
 router.delete('/:taskId', verifyAccessToken, removeTaskByIdController);
+
+// [DELETE] /task/subtask/{taskId} -> Clear all subtask belong to task
+router.delete('/subtask/:taskId', verifyAccessToken, clearAllSubtaskBelongToTaskController);
 
 // [PUT] /task/{taskId}/move -> Move task to gtask
 router.put('/:taskId/move', verifyAccessToken, moveTaskToGTaskController);
