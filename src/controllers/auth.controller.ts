@@ -10,6 +10,7 @@ import {
 } from '../utils/jwt_service';
 import { removeKeys } from '../utils/remove_key';
 import { ResJSON } from '../utils/interface';
+import client from '../configs/connectionRedis';
 
 interface registerModel {
   email: string;
@@ -150,19 +151,10 @@ export const logoutController = async (
     // Verify refreshToken
     const { user } = await verifyRefreshToken(refreshToken);
 
-    // Remove refreshToken in Database & clear RK in cookies
-    await User.update(
-      {
-        refreshToken: '',
-      },
-      {
-        where: {
-          mail: user.mail,
-        },
-      }
-    );
-    // .then(() => res.clearCookie('refreshToken'))
-    // .catch((err) => next(createError.InternalServerError('Unable update RK in database')));
+    // Remove RK in redis
+    await client
+      .del(user.mail)
+      .catch((err) => next(createError.InternalServerError(`Unable delete key in redis: ${err}`)));
 
     res.status(200).json({
       statusCode: 200,

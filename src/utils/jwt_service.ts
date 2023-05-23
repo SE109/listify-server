@@ -2,6 +2,7 @@ import JWT, { JwtPayload } from 'jsonwebtoken';
 import createError from 'http-errors';
 import { User } from '../models';
 import { Request, Response, NextFunction } from 'express';
+import client from '../configs/connectionRedis';
 
 export interface userPayload {
   mail: string;
@@ -66,19 +67,14 @@ const signRefreshToken = async (user: userPayload) => {
     JWT.sign(payload, secret!, options, async (err, token) => {
       if (err) reject(err);
 
-      // Save refresh token to DB
-      await User.update(
-        {
-          refreshToken: token,
-        },
-        {
-          where: {
-            mail: user.mail,
-          },
-        }
-      ).catch((err) =>
-        reject(createError.InternalServerError(`Unable save refresh token to database: ${err}`))
-      );
+      // Save RK to redis
+      await client
+        .set(payload.user.mail, token!, {
+          EX: 365 * 24 * 60 * 60,
+        })
+        .catch((err) => {
+          reject(createError.InternalServerError(`Unable save refresh token to redis: ${err}`));
+        });
 
       resolve(token);
     });
@@ -128,16 +124,12 @@ const verifyRefreshToken = (refreshToken: string): Promise<IPayload> => {
         return reject(createError.BadRequest('Missing payload in token'));
       }
 
-      // Get refresh token from db
-      const user = await User.findOne({
-        where: {
-          mail: <IPayload>payload.user.mail,
-        },
-        raw: true,
-        nest: true,
-      });
-
-      if (refreshToken !== user?.refreshToken) {
+      // Get RK from redis
+      const RK = await client.get(payload.user.mail);
+      if (RK === null) {
+        reject(createError.NotAcceptable('Our system does not have your refresh token'));
+      }
+      if (RK !== refreshToken) {
         reject(createError.Unauthorized('Invalid refresh token'));
       }
 
