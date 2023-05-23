@@ -13,14 +13,14 @@ services:
     depends_on:
       - postgres
       - pgadmin
+      - redis
     environment:
-      # - REDIS_HOST=redis
-      # - REDIS_PORT=6379
+      - REDIS_URL=redis://redis:6379
       - PG_HOST=postgres
       - PG_USER=postgres
       - PG_PASSWORD=changeme
-      - PG_PORT = 5432
-      - PG_DATABASE = listify
+      - PG_PORT=5432
+      - PG_DATABASE=listify
 
   postgres:
     container_name: postgres
@@ -51,7 +51,23 @@ services:
     depends_on:
       - postgres
 
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+
+  redisinsight:
+    container_name: redisinsight
+    image: redislabs/redisinsight:latest
+    ports:
+      - '8001:8001'
+    volumes:
+      - ./Users/ajeetraina/data/redisinsight:/db
+
 volumes:
   postgres:
   pgadmin:
-  # redis-data:
+  redis-data:
