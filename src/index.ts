@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { sequelize } from './configs/sequelize';
 import { ResJSON } from './utils/interface';
+import './configs/connectionRedis';
 
 const app: Express = express();
 
