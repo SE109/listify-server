@@ -104,24 +104,22 @@ export const getInfoController = async (
             },
           ],
         },
-        {
-          model: Task,
-          where: {
-            id: {
-              [Op.notIn]: taskIdList,
-            },
-          },
-          attributes: {
-            exclude: ['userMail', 'createdAt', 'updatedAt'],
-          },
-        },
       ],
+    });
+
+    const noneListed = await Task.findAll({
+      where: {
+        userMail,
+        id: {
+          [Op.notIn]: taskIdList,
+        },
+      },
     });
 
     res.status(200).json({
       statusCode: 200,
       message: 'Success',
-      data: userInfo,
+      data: { ...userInfo?.dataValues, nonelistedTaskList: noneListed },
     });
   } catch (err) {
     next(err);
