@@ -1,6 +1,8 @@
 import { Sequelize } from 'sequelize-typescript';
 import { config } from 'dotenv';
 import * as models from '../models';
+import { Log, getProcessId } from '../utils/function';
+import moment from 'moment';
 
 config();
 
@@ -17,25 +19,30 @@ const sequelize = new Sequelize(
   }
 );
 
-// Create database `listify` if not exists
-sequelize
-  .query(`CREATE DATABASE IF NOT EXISTS \`${process.env.PG_DATABASE}\`;`)
-  .then(() => console.log(`DATABASE with name \`${process.env.PG_DATABASE}\` created`))
-  .catch(() => console.log(`DATABASE with name \`${process.env.PG_DATABASE}\` existed`));
-
 // Check connection to PostgreeDB
 sequelize
   .authenticate()
   .then(() => {
+    Log.writer().info(
+      `[Info] Listify ${getProcessId()} - [Postgres] ${moment().format(
+        'DD/MM/YYYY'
+      )}, ${moment().format('h:mm:ss A')} - Connected successfully`
+    );
     console.log('Connected successfully');
   })
   .catch((err) => {
+    Log.writer().info(
+      `[ERROR] Listify ${getProcessId()} - [Postgres] ${moment().format(
+        'DD/MM/YYYY'
+      )}, ${moment().format('h:mm:ss A')} - Unable connect to database: ${JSON.stringify(err)}`
+    );
     console.log('Unable connect to database: ', err);
   });
 
 // Close connection when stop app
-process.on('exit', () => {
-  sequelize.close();
-});
+// process.on('exit', () => {
+//   Log.writer().info(`[INFO] Listify ${getProcessId()} [Server] Sequelize stop app`);
+//   sequelize.close();
+// });
 
 export { sequelize };

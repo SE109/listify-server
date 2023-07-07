@@ -4,3 +4,11 @@ export interface ResJSON {
   data?: Object | null;
   error?: string;
 }
+
+export type LogResponse = {
+  ApiName: string;
+  UserId: string | null;
+  Request: string;
+  Response: string;
+  Elapsed: string;
+};
